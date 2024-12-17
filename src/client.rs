@@ -12,7 +12,6 @@ use reqwest::{Response, StatusCode, Url};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::collections::HashMap;
-use std::time::Duration;
 
 /// Represents a Salesforce Client
 pub struct Client {
@@ -28,32 +27,33 @@ pub struct Client {
 impl Client {
     /// Creates a new client when passed a Client ID and Client Secret. These
     /// can be obtained by creating a connected app in Salesforce
+    /// 
     pub fn new(client_id: Option<String>, client_secret: Option<String>) -> Self {
-        let http_client = reqwest::ClientBuilder::new().timeout(Duration::from_secs(30)).build();
-        
-        match http_client {
-            Ok(http_client) => 
-            Client {
-                http_client,
-                client_id,
-                client_secret,
-                login_endpoint: "https://login.salesforce.com".to_string(),
-                access_token: None,
-                instance_url: None,
-                version: "v44.0".to_string(),
-            },
-            Err(e) => {
-                let http_client = reqwest::Client::new();
-                Client {
-                    http_client,
-                    client_id,
-                    client_secret,
-                    login_endpoint: "https://login.salesforce.com".to_string(),
-                    access_token: None,
-                    instance_url: None,
-                    version: "v44.0".to_string(),
-                }
-            }
+        let http_client = reqwest::Client::new();
+        Client {
+            http_client,
+            client_id,
+            client_secret,
+            login_endpoint: "https://login.salesforce.com".to_string(),
+            access_token: None,
+            instance_url: None,
+            version: "v44.0".to_string(),
+        }
+    }
+
+    /// Creates a new client when passed a Client ID, Client Secret and reqwest Client. Client Id 
+    /// and Client Secret can be obtained by creating a connected app in Salesforce. reqwest Client
+    /// can be created by user which allows user to set values like timeout. 
+    pub fn new_client(client_id: Option<String>, client_secret: Option<String>, http_client: reqwest::Client) -> Self 
+    {
+        Client {
+            http_client,
+            client_id,
+            client_secret,
+            login_endpoint: "https://login.salesforce.com".to_string(),
+            access_token: None,
+            instance_url: None,
+            version: "v44.0".to_string(),
         }
     }
 
